@@ -1,0 +1,3 @@
+admin,admin123,admin
+student1,pass123,student,S001
+student2,pass123,student,S002
