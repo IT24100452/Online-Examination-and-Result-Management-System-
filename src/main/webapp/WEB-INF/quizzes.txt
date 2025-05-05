@@ -1,0 +1,7 @@
+Math Quiz,Math,30,3
+What is 2 + 2?,2,3,4,5,2
+What is 5 x 3?,10,15,20,25,1
+What is 10 - 7?,1,2,3,4,2
+Physics Quiz,Physics,45,2
+What is the unit of force?,Newton,Joule,Watt,Pascal,0
+What is the speed of light?,3x10^8 m/s,300 m/s,30 m/s,3 m/s,0
