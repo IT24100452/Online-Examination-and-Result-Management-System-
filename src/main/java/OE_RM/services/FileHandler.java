@@ -71,5 +71,30 @@ public void updateUser(String username, String newPassword, String newName, Stri
             throw new IOException("Error updating user: " + e.getMessage(), e);
         }
     }
+ public void deleteUser(String username, String userFilePath) throws IOException {
+        List<String> lines = new ArrayList<>();
+        boolean deleted = false;
+        try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.startsWith(username + ",")) {
+                    lines.add(line);
+                } else {
+                    deleted = true;
+                }
+            }
+        }
+        if (!deleted) {
+            throw new IOException("User not found: " + username);
+        }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFilePath))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new IOException("Error deleting user: " + e.getMessage(), e);
+        }
+    }
 
   
