@@ -27,4 +27,16 @@ public class FileHandler {
     }
 
 
+    public void saveUser(User user, String userFilePath) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(userFilePath, true))) {
+            String line = user instanceof Student
+                    ? String.format("%s,%s,student,%s", user.getUsername(), user.getPassword(), ((Student) user).getName())
+                    : String.format("%s,%s,%s", user.getUsername(), user.getPassword(), user.getRole());
+            writer.write(line);
+            writer.newLine();
+        } catch (IOException e) {
+            throw new IOException("Error saving user: " + e.getMessage(), e);
+        }
+    }
+
    
