@@ -97,4 +97,60 @@ public void updateUser(String username, String newPassword, String newName, Stri
         }
     }
 
+     public void saveQuizzes(List<Quiz> quizzes, String quizFilePath) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(quizFilePath))) {
+            for (Quiz quiz : quizzes) {
+                writer.write(quiz.toFileString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new IOException("Error saving quizzes: " + e.getMessage(), e);
+        }
+    }
+
+    public List<Quiz> readQuizzes(String quizFilePath) throws IOException {
+        List<Quiz> quizzes = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(quizFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    String[] header = line.split(",");
+                    if (header.length < 4) continue;
+                    String quizName = header[0];
+                    String moduleName = header[1];
+                    int duration;
+                    int numQuestions;
+                    try {
+                        duration = Integer.parseInt(header[2]);
+                        numQuestions = Integer.parseInt(header[3]);
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+                    Quiz quiz = new Quiz(quizName, moduleName, duration);
+                    for (int i = 0; i < numQuestions; i++) {
+                        line = reader.readLine();
+                        if (line != null) {
+                            String[] parts = line.split(",");
+                            if (parts.length < 6) continue;
+                            String questionText = parts[0];
+                            String[] options = new String[4];
+                            System.arraycopy(parts, 1, options, 0, 4);
+                            int correct;
+                            try {
+                                correct = Integer.parseInt(parts[5]);
+                            } catch (NumberFormatException e) {
+                                continue;
+                            }
+                            quiz.addQuestion(questionText, options, correct);
+                        }
+                    }
+                    quizzes.add(quiz);
+                }
+            }
+        } catch (IOException e) {
+            throw new IOException("Error reading quizzes: " + e.getMessage(), e);
+        }
+        return quizzes;
+    }
+
   
