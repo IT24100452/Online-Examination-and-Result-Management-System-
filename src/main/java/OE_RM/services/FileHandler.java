@@ -186,5 +186,16 @@ public List<ResultEntry> readResults(String resultsFilePath) throws IOException 
         }
         return results;
     }
-
+public void updateResult(Student student, String moduleName, String userFilePath, String resultsFilePath) throws IOException {
+        List<ResultEntry> results = readResults(resultsFilePath);
+        ResultEntry existing = results.stream()
+                .filter(r -> r.studentId.equals(student.getStudentId()) && r.moduleName.equals(moduleName))
+                .findFirst().orElse(null);
+        if (existing != null) {
+            existing.score = student.getScore();
+        } else {
+            results.add(new ResultEntry(student.getStudentId(), moduleName, student.getScore()));
+        }
+        saveResults(results, resultsFilePath);
+    }
   
