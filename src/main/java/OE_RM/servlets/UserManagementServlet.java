@@ -52,4 +52,28 @@ public class UserManagementServlet extends HttpServlet {
         request.getRequestDispatcher("userManagement.jsp").forward(request, response);
     }
 
-    
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String role = (String) request.getSession().getAttribute("role");
+        if (!"admin".equals(role)) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        String username = request.getParameter("username");
+        String userFilePath = getServletContext().getRealPath("/WEB-INF/users.txt");
+
+        try {
+            if ("add".equals(action)) { //  "addUser"
+                String password = request.getParameter("password");
+                String selectedRole = request.getParameter("role");
+                String name = request.getParameter("name");
+
+                if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty() || selectedRole == null) {
+                    request.setAttribute("error", "Username, password, and role are required to add a user.");
+                    doGet(request, response);
+                    return;
+                }
+
+                
