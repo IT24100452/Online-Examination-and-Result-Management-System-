@@ -152,5 +152,39 @@ public void updateUser(String username, String newPassword, String newName, Stri
         }
         return quizzes;
     }
+    public void saveResults(List<ResultEntry> results, String resultsFilePath) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(resultsFilePath))) {
+            for (ResultEntry entry : results) {
+                writer.write(entry.toString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new IOException("Error saving results: " + e.getMessage(), e);
+        }
+    }
+    
+public List<ResultEntry> readResults(String resultsFilePath) throws IOException {
+        List<ResultEntry> results = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(resultsFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    String studentId = parts[0];
+                    String moduleName = parts[1];
+                    int score;
+                    try {
+                        score = Integer.parseInt(parts[2]);
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+                    results.add(new ResultEntry(studentId, moduleName, score));
+                }
+            }
+        } catch (IOException e) {
+            throw new IOException("Error reading results: " + e.getMessage(), e);
+        }
+        return results;
+    }
 
   
