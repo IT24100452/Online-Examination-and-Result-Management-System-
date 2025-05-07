@@ -51,3 +51,42 @@ public class QuizServlet extends HttpServlet {
             }
         }
     }
+    
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String moduleName = request.getParameter("moduleName");
+        String role = (String) request.getSession().getAttribute("role");
+        String quizFilePath = getServletContext().getRealPath("/WEB-INF/quizzes.txt");
+        String resultsFilePath = getServletContext().getRealPath("/WEB-INF/results.txt");
+        List<Quiz> quizzes = fileHandler.readQuizzes(quizFilePath);
+
+        if ("submit".equals(action) && moduleName != null && "student".equals(role)) {
+            Student student = (Student) request.getSession().getAttribute("user");
+            if (student == null) {
+                response.sendRedirect("login");
+                return;
+            }
+            Quiz quiz = quizzes.stream()
+                    .filter(q -> q.getModuleName().equals(moduleName))
+                    .findFirst()
+                    .orElse(null);
+            if (quiz != null) {
+                int correctAnswers = 0;
+                for (int i = 0; i < quiz.getTotalQuestions(); i++) {
+                    String selected = request.getParameter("answer" + i);
+                    if (selected != null) {
+                        int answer = Integer.parseInt(selected);
+                        if (answer == quiz.getCorrectAnswer(i)) {
+                            correctAnswers++;
+                        }
+                    }
+                }
+                double percentageScore = (correctAnswers * 100.0) / quiz.getTotalQuestions();
+                student.setScore((int) percentageScore);
+                fileHandler.updateResult(student, moduleName, null, resultsFilePath);
+                request.getSession().setAttribute("submissionMessage", "Quiz submitted successfully");
+                response.sendRedirect("studentDashboard");
+            } else {
+                response.sendRedirect("studentDashboard?error=quizNotFound");
+            }
