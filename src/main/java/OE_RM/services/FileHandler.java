@@ -198,4 +198,13 @@ public void updateResult(Student student, String moduleName, String userFilePath
         }
         saveResults(results, resultsFilePath);
     }
+public boolean hasStudentAttemptedQuiz(String resultsFilePath, String studentId, String moduleName) throws IOException {
+        List<ResultEntry> results = readResults(resultsFilePath);
+        for (ResultEntry entry : results) {
+            if (entry.getStudentId().equals(studentId) && entry.getModuleName().equals(moduleName)) {
+                return true;
+            }
+        }
+        return false;
+    }
   
