@@ -75,5 +75,45 @@ public class UserManagementServlet extends HttpServlet {
                     doGet(request, response);
                     return;
                 }
+                // Check for duplicate username
+                User existingUser = fileHandler.readUser(username, userFilePath);
+                if (existingUser != null) {
+                    request.setAttribute("error", "Username already exists: " + username);
+                    doGet(request, response);
+                    return;
+                }
+
+                if ("student".equals(selectedRole)) {
+                    if (name == null || name.trim().isEmpty()) {
+                        request.setAttribute("error", "Name is required for student users.");
+                        doGet(request, response);
+                        return;
+                    }
+                    Student newStudent = new Student(username, password, name);
+                    fileHandler.saveUser(newStudent, userFilePath);
+                } else if ("admin".equals(selectedRole)) {
+                    User newAdmin = new User(username, password, "admin");
+                    fileHandler.saveUser(newAdmin, userFilePath);
+                } else {
+                    request.setAttribute("error", "Invalid role selected.");
+                    doGet(request, response);
+                    return;
+                }
+                request.setAttribute("message", "User added successfully: " + username + " (" + selectedRole + ")");
+            } else if ("update".equals(action)) {
+                String newPassword = request.getParameter("newPassword");
+                String newName = request.getParameter("newName");
+                fileHandler.updateUser(username, newPassword, newName, userFilePath);
+                request.setAttribute("message", "User updated successfully!");
+            } else if ("delete".equals(action)) {
+                fileHandler.deleteUser(username, userFilePath);
+                request.setAttribute("message", "User deleted successfully!");
+            }
+        } catch (IOException e) {
+            request.setAttribute("error", "Error performing action: " + e.getMessage());
+        }
+        doGet(request, response);
+    }
+}
 
                 
