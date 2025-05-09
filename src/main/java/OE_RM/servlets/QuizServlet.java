@@ -90,3 +90,53 @@ public class QuizServlet extends HttpServlet {
             } else {
                 response.sendRedirect("studentDashboard?error=quizNotFound");
             }
+            Quiz existingQuiz = quizzes.stream()
+                    .filter(q -> q.getModuleName().equals(moduleName))
+                    .findFirst()
+                    .orElse(null);
+            if (existingQuiz == null) {
+                response.sendRedirect("adminDashboard?error=quizNotFound");
+                return;
+            }
+
+            quizzes.remove(existingQuiz);
+            Quiz updatedQuiz = new Quiz(quizName, moduleName, duration);
+            for (int i = 0; i < questions.length; i++) {
+                String[] optionArray = options[i].split(",");
+                if (optionArray.length != 4) {
+                    request.setAttribute("error", "Each question must have exactly 4 options.");
+                    request.getRequestDispatcher("exam.jsp").forward(request, response);
+                    return;
+                }
+                int correct;
+                try {
+                    correct = Integer.parseInt(correctAnswers[i]);
+                    if (correct < 0 || correct > 3) {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("error", "Correct answer must be a number between 0 and 3.");
+                    request.getRequestDispatcher("exam.jsp").forward(request, response);
+                    return;
+                }
+                updatedQuiz.addQuestion(questions[i], optionArray, correct);
+            }
+
+            quizzes.add(updatedQuiz);
+            fileHandler.saveQuizzes(quizzes, quizFilePath);
+            request.getSession().setAttribute("successMessage", "Quiz updated successfully!");
+            response.sendRedirect("adminDashboard");
+        } else if ("delete".equals(action) && "admin".equals(role)) {
+            Quiz quizToDelete = quizzes.stream()
+                    .filter(q -> q.getModuleName().equals(moduleName))
+                    .findFirst()
+                    .orElse(null);
+            if (quizToDelete != null) {
+                quizzes.remove(quizToDelete);
+                fileHandler.saveQuizzes(quizzes, quizFilePath);
+                request.getSession().setAttribute("successMessage", "Quiz deleted successfully!");
+            }
+            response.sendRedirect("adminDashboard");
+        } else {
+            response.sendRedirect("login");
+        }
