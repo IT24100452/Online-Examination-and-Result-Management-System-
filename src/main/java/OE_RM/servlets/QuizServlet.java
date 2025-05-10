@@ -90,6 +90,58 @@ public class QuizServlet extends HttpServlet {
             } else {
                 response.sendRedirect("studentDashboard?error=quizNotFound");
             }
+
+            } else if ("save".equals(action) && "admin".equals(role)) {
+            String quizName = request.getParameter("quizName");
+            String durationStr = request.getParameter("duration");
+            String[] questions = request.getParameterValues("question");
+            String[] options = request.getParameterValues("options");
+            String[] correctAnswers = request.getParameterValues("correct");
+
+            if (quizName == null || moduleName == null || durationStr == null || questions == null || options == null || correctAnswers == null) {
+                request.setAttribute("error", "All fields are required to create a quiz.");
+                request.getRequestDispatcher("exam.jsp").forward(request, response);
+                return;
+            }
+
+            int duration;
+            try {
+                duration = Integer.parseInt(durationStr);
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid duration format.");
+                request.getRequestDispatcher("exam.jsp").forward(request, response);
+                return;
+            }
+
+            // Check for duplicate module name
+            if (quizzes.stream().anyMatch(q -> q.getModuleName().equals(moduleName))) {
+                request.setAttribute("error", "A quiz with this module name already exists.");
+                request.getRequestDispatcher("exam.jsp").forward(request, response);
+                return;
+            }
+
+            Quiz newQuiz = new Quiz(quizName, moduleName, duration);
+            for (int i = 0; i < questions.length; i++) {
+                String[] optionArray = options[i].split(",");
+                if (optionArray.length != 4) {
+                    request.setAttribute("error", "Each question must have exactly 4 options.");
+                    request.getRequestDispatcher("exam.jsp").forward(request, response);
+                    return;
+                }
+                int correct;
+                try {
+                    correct = Integer.parseInt(correctAnswers[i]);
+                    if (correct < 0 || correct > 3) {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("error", "Correct answer must be a number between 0 and 3.");
+                    request.getRequestDispatcher("exam.jsp").forward(request, response);
+                    return;
+                }
+                newQuiz.addQuestion(questions[i], optionArray, correct);
+            }
+            
             Quiz existingQuiz = quizzes.stream()
                     .filter(q -> q.getModuleName().equals(moduleName))
                     .findFirst()
