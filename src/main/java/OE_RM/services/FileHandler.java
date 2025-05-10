@@ -207,4 +207,34 @@ public boolean hasStudentAttemptedQuiz(String resultsFilePath, String studentId,
         }
         return false;
     }
-  
+
+public static class ResultEntry {
+        private String studentId;
+        private String moduleName;
+        private int score;
+
+        public ResultEntry(String studentId, String moduleName, int score) {
+            this.studentId = studentId;
+            this.moduleName = moduleName;
+            this.score = score;
+        }
+
+        public String getStudentId() {
+            return studentId; }
+
+        public String getModuleName() {
+            return moduleName; }
+
+        public int getScore() {
+            return score; }
+
+        public void setScore(int score) {
+            this.score = score; }
+
+        @Override
+        public String toString() {
+
+            return studentId + "," + moduleName + "," + score;
+        }
+    }
+}
