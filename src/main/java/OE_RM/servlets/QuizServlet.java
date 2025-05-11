@@ -192,3 +192,5 @@ public class QuizServlet extends HttpServlet {
         } else {
             response.sendRedirect("login");
         }
+    }
+}
