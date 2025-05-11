@@ -19,3 +19,10 @@ public class ResultServlet extends HttpServlet {
         fileHandler = new FileHandler();
     }
 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String role = (String) request.getSession().getAttribute("role");
+        String userFilePath = getServletContext().getRealPath("/WEB-INF/users.txt");
+        String resultsFilePath = getServletContext().getRealPath("/WEB-INF/results.txt");
+
+
