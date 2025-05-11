@@ -113,13 +113,7 @@ public class QuizServlet extends HttpServlet {
                 return;
             }
 
-            // Check for duplicate module name
-            if (quizzes.stream().anyMatch(q -> q.getModuleName().equals(moduleName))) {
-                request.setAttribute("error", "A quiz with this module name already exists.");
-                request.getRequestDispatcher("exam.jsp").forward(request, response);
-                return;
-            }
-
+           
             Quiz newQuiz = new Quiz(quizName, moduleName, duration);
             for (int i = 0; i < questions.length; i++) {
                 String[] optionArray = options[i].split(",");
@@ -140,6 +134,33 @@ public class QuizServlet extends HttpServlet {
                     return;
                 }
                 newQuiz.addQuestion(questions[i], optionArray, correct);
+            }
+            
+
+            quizzes.add(newQuiz);
+            fileHandler.saveQuizzes(quizzes, quizFilePath);
+            request.getSession().setAttribute("successMessage", "Quiz creation successful");
+            response.sendRedirect("adminDashboard");
+        } else if ("edit".equals(action) && "admin".equals(role)) {
+            String quizName = request.getParameter("quizName");
+            String durationStr = request.getParameter("duration");
+            String[] questions = request.getParameterValues("question");
+            String[] options = request.getParameterValues("options");
+            String[] correctAnswers = request.getParameterValues("correct");
+
+            if (quizName == null || moduleName == null || durationStr == null || questions == null || options == null || correctAnswers == null) {
+                request.setAttribute("error", "All fields are required to update a quiz.");
+                request.getRequestDispatcher("exam.jsp").forward(request, response);
+                return;
+            }
+
+            int duration;
+            try {
+                duration = Integer.parseInt(durationStr);
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid duration format.");
+                request.getRequestDispatcher("exam.jsp").forward(request, response);
+                return;
             }
             
             Quiz existingQuiz = quizzes.stream()
