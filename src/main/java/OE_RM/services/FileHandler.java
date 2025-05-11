@@ -152,6 +152,58 @@ public void updateUser(String username, String newPassword, String newName, Stri
         }
         return quizzes;
     }
+    
+    public void updateQuizzes(String quizName, Quiz updatedQuiz, String quizFilePath) throws IOException {
+        List<Quiz> quizzes = readQuizzes(quizFilePath);
+        boolean updated = false;
+
+        for (int i = 0; i < quizzes.size(); i++) {
+            if (quizzes.get(i).getQuizName().equals(quizName)) {
+                quizzes.set(i, updatedQuiz);
+                updated = true;
+                break;
+            }
+        }
+
+        if (!updated) {
+            throw new IOException("Quiz not found: " + quizName);
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(quizFilePath))) {
+            for (Quiz quiz : quizzes) {
+                writer.write(quiz.toFileString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new IOException("Error updating quizzes: " + e.getMessage(), e);
+        }
+    }
+    
+    public void deleteQuizzes(String quizName, String quizFilePath) throws IOException {
+        List<Quiz> quizzes = readQuizzes(quizFilePath);
+        boolean deleted = false;
+
+        for (int i = 0; i < quizzes.size(); i++) {
+            if (quizzes.get(i).getQuizName().equals(quizName)) {
+                quizzes.remove(i);
+                deleted = true;
+                break;
+            }
+        }
+
+        if (!deleted) {
+            throw new IOException("Quiz not found: " + quizName);
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(quizFilePath))) {
+            for (Quiz quiz : quizzes) {
+                writer.write(quiz.toFileString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new IOException("Error deleting quiz: " + e.getMessage(), e);
+        }
+    }
     public void saveResults(List<ResultEntry> results, String resultsFilePath) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(resultsFilePath))) {
             for (ResultEntry entry : results) {
