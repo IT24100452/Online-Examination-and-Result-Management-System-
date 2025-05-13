@@ -238,7 +238,26 @@ public List<ResultEntry> readResults(String resultsFilePath) throws IOException 
         }
         return results;
     }
+    public List<Quiz> readAttempt(String studentId, String quizFilePath, String resultsFilePath) throws IOException {
+        List<Quiz> allQuizzes = readQuizzes(quizFilePath);
+        List<Quiz> availableQuizzes = new ArrayList<>();
+        List<ResultEntry> results = readResults(resultsFilePath);
 
+        for (Quiz quiz : allQuizzes) {
+            boolean hasAttempted = false;
+            for (ResultEntry entry : results) {
+                if (entry.getStudentId().equals(studentId) && entry.getModuleName().equals(quiz.getModuleName())) {
+                    hasAttempted = true;
+                    break;
+                }
+            }
+            if (!hasAttempted) {
+                availableQuizzes.add(quiz);
+            }
+        }
+
+        return availableQuizzes;
+    }
     
 public static class ResultEntry {
         private String studentId;
