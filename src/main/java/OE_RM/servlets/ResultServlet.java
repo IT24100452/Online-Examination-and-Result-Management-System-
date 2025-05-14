@@ -25,4 +25,17 @@ public class ResultServlet extends HttpServlet {
         String userFilePath = getServletContext().getRealPath("/WEB-INF/users.txt");
         String resultsFilePath = getServletContext().getRealPath("/WEB-INF/results.txt");
 
+        List<FileHandler.ResultEntry> results = fileHandler.readResults(resultsFilePath);
+        if ("admin".equals(role)) {
+            request.setAttribute("results", results);
+        } else {
+            Student student = (Student) request.getSession().getAttribute("user");
+            List<FileHandler.ResultEntry> studentResults = results.stream()
+                    .filter(r -> r.getStudentId().equals(student.getStudentId()))
+                    .toList();
+            request.setAttribute("studentResults", studentResults);
+        }
+        request.getRequestDispatcher("results.jsp").forward(request, response);
+    }
+}
 
