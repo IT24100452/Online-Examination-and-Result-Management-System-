@@ -1,7 +1,14 @@
-Math Quiz,Math,30,3
-What is 2 + 2?,2,3,4,5,2
-What is 5 x 3?,10,15,20,25,1
-What is 10 - 7?,1,2,3,4,2
-Physics Quiz,Physics,45,2
-What is the unit of force?,Newton,Joule,Watt,Pascal,0
-What is the speed of light?,3x10^8 m/s,300 m/s,30 m/s,3 m/s,0
+vCS101 Quiz,CS101,10,4
+ What is 2+2?,1,2,3,4,3
+ What is the capital of France?,Paris,London,Berlin,Rome,0
+ What is H2O?,Water,Salt,Sugar,Acid,0
+ What is the sun?,Star,Planet,Moon,Asteroid,0
+ Math101 Quiz,Math101,15,3
+ Solve x+5=10,2,3,4,5,4
+ What is 3*4?,10,12,14,16,1
+ What is sqrt(16)?,2,3,4,5,2
+ Physics101 Quiz,Physics101,12,4
+ What is gravity?,Force,Element,Color,Sound,0
+ Speed of light?,300000 km/s,150000 km/s,500000 km/s,100000 km/s,0
+ What is energy?,Work,Mass,Time,Space,1
+ What is a Newton?,Unit,Planet,Star,Element,2
