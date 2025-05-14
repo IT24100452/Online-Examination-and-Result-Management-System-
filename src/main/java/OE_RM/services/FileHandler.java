@@ -258,6 +258,24 @@ public List<ResultEntry> readResults(String resultsFilePath) throws IOException 
 
         return availableQuizzes;
     }
+    public void updateAttempt(Student student, String moduleName, int score, String resultsFilePath) throws IOException {
+        List<ResultEntry> results = readResults(resultsFilePath);
+        boolean exists = false;
+
+        for (ResultEntry entry : results) {
+            if (entry.getStudentId().equals(student.getStudentId()) && entry.getModuleName().equals(moduleName)) {
+                entry.setScore(score);
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists) {
+            results.add(new ResultEntry(student.getStudentId(), moduleName, score));
+        }
+
+        saveResults(results, resultsFilePath);
+    }
     
 public static class ResultEntry {
         private String studentId;
