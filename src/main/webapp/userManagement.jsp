@@ -15,4 +15,20 @@
                 <a href="adminDashboard"><button>Back to Dashboard</button></a>
             </div>
         </div>
-       
+        <% String successMessage = (String) session.getAttribute("successMessage"); %>
+        <% if (successMessage != null) { %>
+        <p class="message success"><%= successMessage %></p>
+        <% session.removeAttribute("successMessage"); %>
+        <% } %>
+        <% String error = (String) request.getAttribute("error"); %>
+        <% if (error != null) { %>
+        <p class="message error"><%= error %></p>
+        <% } %>
+        <% String message = (String) request.getAttribute("message"); %>
+        <% if (message != null) { %>
+        <p class="message success"><%= message %></p>
+        <% } %>
+    </div>
+</div>
+<div class="container">
+   
