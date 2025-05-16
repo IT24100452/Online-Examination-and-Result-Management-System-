@@ -31,4 +31,18 @@
     </div>
 </div>
 <div class="container">
+    <h3>Add User</h3>
+    <form action="userManagement" method="post">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="text" name="password" placeholder="Password" required>
+        <select name="role" required>
+            <option value="">Select Role</option>
+            <option value="admin">Admin</option>
+            <option value="student">Student</option>
+        </select>
+        <input type="text" name="name" placeholder="Name (required for student)" id="nameField">
+        <input type="hidden" name="action" value="add">
+        <button type="submit">Add User</button>
+    </form>
+
    
