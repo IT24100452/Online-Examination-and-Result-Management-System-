@@ -8,6 +8,87 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileHandler {
+    // Node class for Linked List
+    public static class Node {
+        ResultEntry data;
+        Node next;
+
+        public Node(ResultEntry data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    // Custom Linked List for ResultEntry
+    public static class LinkedList {
+        Node head;
+
+        public LinkedList() {
+            head = null;
+        }
+
+        // Add a new ResultEntry to the end of the list
+        public void add(ResultEntry entry) {
+            Node newNode = new Node(entry);
+            if (head == null) {
+                head = newNode;
+            } else {
+                Node current = head;
+                while (current.next != null) {
+                    current = current.next;
+                }
+                current.next = newNode;
+            }
+        }
+
+        // Convert Linked List to array for sorting or iteration
+        public ResultEntry[] toArray() {
+            int size = 0;
+            Node current = head;
+            while (current != null) {
+                size++;
+                current = current.next;
+            }
+
+            ResultEntry[] array = new ResultEntry[size];
+            current = head;
+            for (int i = 0; i < size; i++) {
+                array[i] = current.data;
+                current = current.next;
+            }
+            return array;
+        }
+
+        // Get size of the Linked List
+        public int size() {
+            int size = 0;
+            Node current = head;
+            while (current != null) {
+                size++;
+                current = current.next;
+            }
+            return size;
+        }
+    }
+
+    // Selection Sort to sort ResultEntry array by score
+    public ResultEntry[] selectionSortByScore(ResultEntry[] entries) {
+        int n = entries.length;
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j < n; j++) {
+                if (entries[j].getScore() < entries[minIndex].getScore()) {
+                    minIndex = j;
+                }
+            }
+            // Swap
+            ResultEntry temp = entries[i];
+            entries[i] = entries[minIndex];
+            entries[minIndex] = temp;
+        }
+        return entries;
+    }
+    
     public User readUser(String username, String userFilePath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
             String line;
@@ -235,9 +316,17 @@ public List<ResultEntry> readResults(String resultsFilePath) throws IOException 
             }
         } catch (IOException e) {
             throw new IOException("Error reading results: " + e.getMessage(), e);
+           
+            // Convert LinkedList to ArrayList 
+        List<ResultEntry> resultList = new ArrayList<>();
+        Node current = results.head;
+        while (current != null) {
+            resultList.add(current.data);
+            current = current.next;
         }
         return results;
     }
+    
     public List<Quiz> readAttempt(String studentId, String quizFilePath, String resultsFilePath) throws IOException {
         List<Quiz> allQuizzes = readQuizzes(quizFilePath);
         List<Quiz> availableQuizzes = new ArrayList<>();
